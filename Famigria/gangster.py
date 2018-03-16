@@ -4,12 +4,13 @@ from enum import Enum, auto
 
 
 class Gangster(object):
-    def __init__(self, family, value, victory_points, serial):
+    def __init__(self, family, value, victory_points, serial, is_newcomer=True):
         self.family = family
         self.value = value
         self.victory_points = victory_points
         self.serial = serial
         self.location = Location.IN_DECK
+        self.is_newcomer = is_newcomer
 
     def __str__(self):
         info = """
@@ -18,15 +19,23 @@ class Gangster(object):
         VALUE: {}
         VICTORY_POINTS: {}
         LOCATION: {}
-        """.format(self.serial, self.family, self.value, self.victory_points, self.location)
+        IS_NEWCOMER: {}
+        """.format(self.serial, self.family, self.value, self.victory_points, self.location, self.is_newcomer)
 
         return info
+
+    def __repr__(self):
+        return repr(self.family)
 
     def get_victory_points(self):
         return self.victory_points
 
-    def is_street(self):
-        return self.is_street
+    def move(self, location):
+        self.location = location
+        return
+
+    def get_location(self):
+        return self.location
 
 
 class Location(Enum):
@@ -34,11 +43,11 @@ class Location(Enum):
     IN_DECK = auto()
     IN_HAND = auto()
     IN_OFFICE = auto()
-    IN_DISCARD = auto()
+    DISCARDED = auto()
 
 
 class Accountants(Gangster):
-    def __init__(self, value, serial):
+    def __init__(self, value, serial=0):
         family = 'Accountants'
         super().__init__(family, value, get_victory_points(family, value), serial)
 
@@ -47,7 +56,7 @@ class Accountants(Gangster):
 
 
 class Brutes(Gangster):
-    def __init__(self, value, serial):
+    def __init__(self, value, serial=0):
         family = 'Brutes'
         super().__init__(family, value, get_victory_points(family, value), serial)
 
@@ -56,7 +65,7 @@ class Brutes(Gangster):
 
 
 class Mercenaries(Gangster):
-    def __init__(self, value, serial):
+    def __init__(self, value, serial=0):
         family = 'Mercenaries'
         super().__init__(family, value, get_victory_points(family, value), serial)
 
@@ -65,7 +74,7 @@ class Mercenaries(Gangster):
 
 
 class Famiglia(Gangster):
-    def __init__(self, value, serial):
+    def __init__(self, value, serial=0):
         family = 'Famiglia'
         super().__init__(family, value, get_victory_points(family, value), serial)
 
