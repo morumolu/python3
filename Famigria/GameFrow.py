@@ -3,8 +3,10 @@
 
 from random import shuffle
 
-from gangster import Accountants, Brutes, Mercenaries, Famiglia, Location
+from Player import Player
 from api import choose_cards
+from gangster import Accountants, Brutes, Mercenaries, Famiglia, Location
+
 
 def main_flow():
     # 捨て札.
@@ -13,13 +15,9 @@ def main_flow():
     # ストリート.
     street = list()
 
-    # プレイヤーの手札.
-    a_hand = set()
-    b_hand = set()
-
-    # プレイヤーの事務所.
-    a_office = set()
-    b_office = set()
+    # プレイヤー初期化.
+    a = Player('A')
+    b = Player('B')
 
     # 山札を初期化.
     deck = generate_cards()
@@ -29,17 +27,19 @@ def main_flow():
 
     # 山札から初期カードを抜く.
 
-    for serial in (0, 15, 30, 45):
-        card = search_cards_by_serial(deck, serial)
-        deck.remove(card)
-        card.location = Location.IN_HAND
-        a_hand.add(card)
-
     for serial in (1, 16, 31, 46):
         card = search_cards_by_serial(deck, serial)
         deck.remove(card)
         card.location = Location.IN_HAND
-        b_hand.add(card)
+        a.hand.add(card)
+
+    for serial in (2, 17, 32, 47):
+        card = search_cards_by_serial(deck, serial)
+        deck.remove(card)
+        card.location = Location.IN_HAND
+        b.hand.add(card)
+
+    print(a, b)
 
     # 山札をシャッフルする.
     shuffle(deck)
@@ -55,8 +55,8 @@ def main_flow():
         # 1. ストリートの補充.
         print("ストリート補充")
         print("ストリート")
-        for i in street:
-            print(i)
+        for index, card in enumerate(street):
+            print(index, card)
 
         i = choose_cards(1)
 
@@ -71,16 +71,14 @@ def main_flow():
 
         print("ストリート補充")
         print("ストリート")
-        for i in street:
-            print(i)
-
+        for index, card in enumerate(street):
+            print(index, card)
 
         # 2. アカウンタンツ
 
         # 3. ブルーツ
 
         # 4. カードの獲得
-
 
     for serial in street:
         print(serial)
