@@ -13,15 +13,7 @@ class Gangster(object):
         self.is_newcomer = is_newcomer
 
     def __str__(self):
-        info = """
-        SERIAL: {}
-        FAMILY: {}
-        VALUE: {}
-        VICTORY_POINTS: {}
-        LOCATION: {}
-        IS_NEWCOMER: {}
-        """.format(self.serial, self.family, self.value, self.victory_points, self.location, self.is_newcomer)
-
+        info = """No.{} : {}({}) VP: {} ,{}, IS_NEWCOMER: {}""".format(self.serial, self.family, self.value, self.victory_points, self.location, self.is_newcomer)
         return info
 
     def __repr__(self):
