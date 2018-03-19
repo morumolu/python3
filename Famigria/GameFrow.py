@@ -138,7 +138,7 @@ def accountants_ability_phase(player):
     index = choose_number(choises=[i for i in range(len(accountants))])
 
     accountant_ = accountants[index]
-    player.hand = player.hand - accountant_
+    player.hand.discard(accountant_)
     player.office.add(accountant_)
 
     return
@@ -167,7 +167,7 @@ def brutes_ability_phase(player):
 
     brute_ = brutes[index]
 
-    player.hand = player.hand - brute_
+    player.hand.discard(brute_)
     player.enable_brute_ability(brute_.value)
 
     player.office.add(brute_)
@@ -207,6 +207,10 @@ def recruit_phase(table, player):
             player.hand.add(recruit)
             table.street.remove(recruit)
             return
+
+        if not can_recruit(player.hand, recruit, player.brute_value):
+            print("獲得できません")
+            continue
 
         else:
             while True:
