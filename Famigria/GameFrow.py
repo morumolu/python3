@@ -6,33 +6,62 @@ from random import shuffle
 from GameTable import GameTable
 from Player import Player
 from api import choose_yes_no, choose_number
-from gangster import Location
+from gangster import Location, Brutes
 from rule import can_recruit
 
 
 def main_flow():
+    # ゲームのセットアップ.
+    table, players = set_up()
+
+    # メインルーチン.
+    while True:
+        for player in players:
+            print('PLAYER: {}'.format(player.name))
+
+            # 1. ストリートの補充.
+            recruitment_phase(table, player)
+
+            # 2. アカウンタンツ
+            accountants_ability_phase(player)
+
+            # 3. ブルーツ
+            brutes_ability_phase(player)
+
+            # 4. カードの獲得
+            recruit_phase(table, player)
+
+            # 能力のリセット.
+            player.disable_brute_ability()
+
+
+def search_cards_by_serial(cards, serial):
+    for card in cards:
+        if card.serial == serial:
+            return card
+
+    return None
+
+
+def set_up():
+    # テーブルクラス.
     table = GameTable()
 
     # プレイヤー初期化.
-    a = Player('A')
-    b = Player('B')
-
-    players = (a, b)
+    players = (Player('A'), Player('B'))
 
     # 山札から初期カードを抜く.
     for serial in (1, 16, 31, 46):
         card = search_cards_by_serial(table.deck, serial)
         table.deck.remove(card)
         card.location = Location.IN_HAND
-        a.hand.add(card)
+        players[0].hand.add(card)
 
     for serial in (2, 17, 32, 47):
         card = search_cards_by_serial(table.deck, serial)
         table.deck.remove(card)
         card.location = Location.IN_HAND
-        b.hand.add(card)
-
-    print(a, b)
+        players[1].hand.add(card)
 
     # 山札をシャッフルする.
     shuffle(table.deck)
@@ -43,29 +72,7 @@ def main_flow():
         card.location = Location.ON_STREET
         table.street.append(card)
 
-    while True:
-        for player in players:
-            print('PLAYER: {}'.format(player.name))
-
-            # 1. ストリートの補充.
-            recruitment_phase(table, player)
-
-            # 2. アカウンタンツ
-            accountants_ability_phase()
-
-            # 3. ブルーツ
-            brutes_ability_phase()
-
-            # 4. カードの獲得
-            recruit_phase(table, player)
-
-
-def search_cards_by_serial(cards, serial):
-    for card in cards:
-        if card.serial == serial:
-            return card
-
-    return None
+    return table, players
 
 
 def recruitment_phase(table, player):
@@ -105,12 +112,44 @@ def recruitment_phase(table, player):
             table.street.append(card)
 
 
-def accountants_ability_phase():
+def accountants_ability_phase(player):
     pass
 
 
-def brutes_ability_phase():
-    pass
+def brutes_ability_phase(player):
+    print('{:*^60}'.format('Bruteフェイズ'))
+
+    hand = list(player.hand)
+    brutes = list()
+
+    for card in hand:
+        if isinstance(card, Brutes) and card.value > 0:
+            brutes.append(card)
+
+    if len(brutes) == 0:
+        return
+
+    print('Brutesを利用しますか？')
+    should_use_brutes = choose_yes_no()
+
+    if not should_use_brutes:
+        return
+
+    print('どのBrutesを利用しますか？')
+    print('{:-^60}'.format('手札'))
+    for index, brute in enumerate(brutes):
+        print('[{}]: {}'.format(index, brute))
+    print('{:-^60}'.format(''))
+    index = choose_number(choises=[i for i in range(len(brutes))])
+
+    brute_ = brutes[index]
+
+    player.hand = player.hand - brute_
+    player.enable_brute_ability(brute_.value)
+
+    player.office.add(brute_)
+
+    return
 
 
 def recruit_phase(table, player):

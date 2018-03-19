@@ -40,8 +40,8 @@ class Location(Enum):
 
 class Accountants(Gangster):
     def __init__(self, value, serial=0):
-        family = 'Accountants'
-        super().__init__(family, value, get_victory_points(family, value), serial)
+        self.family = 'Accountants'
+        super().__init__(self.family, value, get_victory_points(self.family, value), serial)
 
     def play(self):
         pass
@@ -49,8 +49,8 @@ class Accountants(Gangster):
 
 class Brutes(Gangster):
     def __init__(self, value, serial=0):
-        family = 'Brutes'
-        super().__init__(family, value, get_victory_points(family, value), serial)
+        self.family = 'Brutes'
+        super().__init__(self.family, value, get_victory_points(self.family, value), serial)
 
     def play(self):
         pass
@@ -58,8 +58,8 @@ class Brutes(Gangster):
 
 class Mercenaries(Gangster):
     def __init__(self, value, serial=0):
-        family = 'Mercenaries'
-        super().__init__(family, value, get_victory_points(family, value), serial)
+        self.family = 'Mercenaries'
+        super().__init__(self.family, value, get_victory_points(self.family, value), serial)
 
     def play(self):
         pass
@@ -67,8 +67,8 @@ class Mercenaries(Gangster):
 
 class Famiglia(Gangster):
     def __init__(self, value, serial=0):
-        family = 'Famiglia'
-        super().__init__(family, value, get_victory_points(family, value), serial)
+        self.family = 'Famiglia'
+        super().__init__(self.family, value, get_victory_points(self.family, value), serial)
 
     def play(self):
         pass

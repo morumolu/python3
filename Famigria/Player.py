@@ -7,6 +7,7 @@ class Player(object):
         self.hand = set()
         self.office = set()
         self.victory_points = 0
+        self.brute_value = 0
 
     def __str__(self):
         # sorted(self.hand, key=attrgetter('family'))
@@ -32,3 +33,9 @@ class Player(object):
         OFFICE: {}
         """.format(self.name, victory_points, hand_info, office_info)
         return info
+
+    def enable_brute_ability(self, brute_value):
+        self.brute_value = brute_value
+
+    def disable_brute_ability(self):
+        self.brute_value = 0
