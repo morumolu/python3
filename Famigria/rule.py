@@ -2,6 +2,42 @@
 
 from itertools import combinations
 
+from gangster import Brutes
+
+
+def extract_available_accountants(hand):
+    accountants = list()
+    for card in hand:
+        if isinstance(card, Brutes) and card.value > 0:
+            accountants.append(card)
+    return accountants
+
+
+def extract_available_brutes(hand):
+    brutes = list()
+    for card in hand:
+        if isinstance(card, Brutes) and card.value > 0:
+            brutes.append(card)
+    return brutes
+
+
+def extract_newcomers(street):
+    newcomers = list()
+    for card in street:
+        if card.is_newcomer:
+            newcomers.append(card)
+    return newcomers
+
+
+def can_play_accountants(hand):
+    if len(extract_available_accountants(hand)) > 0:
+        return True
+
+
+def can_play_brutes(hand):
+    if len(extract_available_brutes(hand)) > 0:
+        return True
+
 
 def can_recruit(hand, recruit, reduce_value=0):
     """

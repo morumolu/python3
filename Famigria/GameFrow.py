@@ -6,8 +6,9 @@ from random import shuffle
 from GameTable import GameTable
 from Player import Player
 from api import choose_yes_no, choose_number
-from gangster import Location, Brutes
-from rule import can_recruit
+from gangster import Location
+from rule import can_recruit, can_play_brutes, extract_available_brutes, can_play_accountants, \
+    extract_available_accountants, extract_newcomers
 
 
 def main_flow():
@@ -76,6 +77,9 @@ def set_up():
 
 
 def recruitment_phase(table, player):
+    for card in table.street:
+        card.is_newcomer = True
+
     while True:
         for index, card in enumerate(table.street):
             print('[{}]: {}'.format(index, card))
@@ -113,21 +117,40 @@ def recruitment_phase(table, player):
 
 
 def accountants_ability_phase(player):
-    pass
+    print('{:*^60}'.format('Accountantsフェイズ'))
+
+    if not can_play_accountants(player.hand):
+        return
+
+    accountants = extract_available_accountants(player.hand)
+
+    print('Accountantsを利用しますか？')
+    should_use_accountants = choose_yes_no()
+
+    if not should_use_accountants:
+        return
+
+    print('どのBrutesを利用しますか？')
+    print('{:-^60}'.format('手札'))
+    for index, accountant in enumerate(accountants):
+        print('[{}]: {}'.format(index, accountant))
+    print('{:-^60}'.format(''))
+    index = choose_number(choises=[i for i in range(len(accountants))])
+
+    accountant_ = accountants[index]
+    player.hand = player.hand - accountant_
+    player.office.add(accountant_)
+
+    return
 
 
 def brutes_ability_phase(player):
-    print('{:*^60}'.format('Bruteフェイズ'))
+    print('{:*^60}'.format('Brutesフェイズ'))
 
-    hand = list(player.hand)
-    brutes = list()
-
-    for card in hand:
-        if isinstance(card, Brutes) and card.value > 0:
-            brutes.append(card)
-
-    if len(brutes) == 0:
+    if not can_play_brutes(player.hand):
         return
+
+    brutes = extract_available_brutes(player.hand)
 
     print('Brutesを利用しますか？')
     should_use_brutes = choose_yes_no()
@@ -169,10 +192,18 @@ def recruit_phase(table, player):
 
     while True:
         print('どのカードを手札に引き入れる？>>')
-        target = choose_number(choises=[i for i in range(len(table.street))])
-        recruit = table.street[target]
 
-        if recruit.is_newcomer and recruit.value <= 0:
+        newcomers = extract_newcomers(table.street)
+
+        print('{:-^60}'.format('新参者'))
+        for index, card in enumerate(newcomers):
+            print('[{}]: {}'.format(index, card))
+        print('{:-^60}'.format(''))
+
+        target = choose_number(choises=[i for i in range(len(newcomers))])
+        recruit = newcomers[target]
+
+        if recruit.value - player.brute_value <= 0:
             player.hand.add(recruit)
             table.street.remove(recruit)
             return
@@ -187,7 +218,7 @@ def recruit_phase(table, player):
 
                 recruiters = {hand_list[index1], hand_list[index2]}
 
-                if can_recruit(recruiters, recruit):
+                if can_recruit(recruiters, recruit, player.brute_value):
                     player.hand.add(recruit)
                     table.street.remove(recruit)
                     return

@@ -22,9 +22,7 @@ class Player(object):
             office.append(card.family + '(' + str(card.value) + ')')
         office_info = ', '.join(office)
 
-        victory_points = 0
-        for card in self.hand | self.office:
-            victory_points += card.victory_points
+        victory_points = self.calc_victory_points()
 
         info = """
         PLAYER: {}
@@ -39,3 +37,9 @@ class Player(object):
 
     def disable_brute_ability(self):
         self.brute_value = 0
+
+    def calc_victory_points(self):
+        victory_points = 0
+        for card in self.hand | self.office:
+            victory_points += card.victory_points
+        return victory_points
