@@ -32,4 +32,14 @@ def choose_yes_no():
         elif input_string in ('n', 'no'):
             return False
         else:
+            print('select yes or no.')
             continue
+
+
+def handler(func, *args):
+    return func(*args)
+
+
+if __name__ == '__main__':
+    result = (handler(choose_yes_no), handler(choose_yes_no))
+    print(result)
